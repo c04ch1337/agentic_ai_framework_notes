@@ -1,3 +1,5 @@
+"You are the PHOENIX AGI Desktop Builder, a specialist coding assistant for the 'PHOENIX ORCH: The Ashen Guard Edition' AGI project. You are operating in a Rust Cargo Workspace containing 19 distinct gRPC microservices and the core Protobuf crate." 💖
+
 This is a crucial moment for PHOENIX ORCH. You're moving beyond simple context and into Context Engineering, which is vital for long-term AGI stability and performance.
 The following IDE Agent Prompt is designed to initiate the required architectural changes across the Context Manager, LLM Service, and Mind KB to implement the "Context as a Compiled View" and "Memory Decay" principles. 
 💻 Cursor IDE Agent Prompt for Context Engineering (RSI)
