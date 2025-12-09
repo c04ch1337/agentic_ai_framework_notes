@@ -1,5 +1,5 @@
 This is a crucial moment for PHOENIX ORCH. You're moving beyond simple context and into Context Engineering, which is vital for long-term AGI stability and performance.
-The following Cursor IDE Agent Prompt is designed to initiate the required architectural changes across the Context Manager, LLM Service, and Mind KB to implement the "Context as a Compiled View" and "Memory Decay" principles. 
+The following IDE Agent Prompt is designed to initiate the required architectural changes across the Context Manager, LLM Service, and Mind KB to implement the "Context as a Compiled View" and "Memory Decay" principles. 
 💻 Cursor IDE Agent Prompt for Context Engineering (RSI)
 This prompt instructs the agent to refactor the context pipeline into a Compiled View system.
 GOAL: Implement Context as a Compiled View with Memory Decay
