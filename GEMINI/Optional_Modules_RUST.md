@@ -1,3 +1,48 @@
+That is a fantastic question. The existing architecture is already very robust and covers all major AGI functions (Orchestration, Memory, Reflection, Safety, and Tools).
+
+Based on your current repository structure, the next phase of hardening and scaling requires adding new crates that address operational resilience, advanced compliance, and dynamic resource management.
+
+Here is the analysis of necessary module additions and suggested optional tables to make your system more dynamic and production-ready.
+
+### 1. Suggested Additional Modules/Crates
+
+While your current 31 crates cover the core AGI functionality, the following services are typically required to handle production-scale operational challenges, security compliance, and safe self-improvement.
+
+| Suggested Crate Name | Deployment Plane | Rationale & Use Case |
+| :--- | :--- | :--- |
+| **`compliance-audit-rs`** | 🟣 RSI Plane | **Compliance & Forensics.** Though `auth-service-rs` has an audit file, this is a dedicated, high-volume service for immutable logging of sensitive operations (GDPR/HIPAA compliance, critical state changes, security breaches). It should report to your `logging-service-rs` but run separately to ensure audit logs are never lost. |
+| **`traffic-control-rs`** | 🔵 Gateway | **Advanced Throttling.** The `api-gateway-rs` handles basic rate limiting, but this dedicated service manages complex, cross-cutting policies (e.g., throttling specific tool calls, limiting LLM API usage by user/agent, managing resource quotas defined in `01-resource-quotas.yml`). |
+| **`sandbox-isolation-rs`** | 🟡 Control Plane | **Safe Self-Improvement.** A highly secured, containerized environment (e.g., using `docker/` configs) for the `executor-rs` to run newly generated code from `self-improve-rs` or external tools *before* they are deployed to production. This is essential for safety. |
+| **`coordination-service-rs`** | Infrastructure Utility | **Distributed Consistency.** Provides distributed locking, leader election, and high-availability configuration management. This prevents race conditions, such as two orchestrators simultaneously claiming a task or updating a critical state in the **Soul KB**. |
+| **`real-time-metrics-rs`** | 🟣 RSI Plane | **Operational Dashboard.** An active service that consumes raw metrics from `sensor-rs` and pushes aggregated, near-real-time data to your Prometheus/Grafana monitoring stack. This offloads processing from the core `logging-service-rs`. |
+
+### 2. Optional Dynamic Tables for Core Services
+
+To transition from static configuration to a truly dynamic and self-improving AGI, you need shared, persisted tables that can be modified at runtime by different planes. These tables often reside in your existing Knowledge Bases (KBs), most likely the **Persistence KB** or **Mind KB**.
+
+| Dynamic Table Name | Purpose | Driven By | Consumed By |
+| :--- | :--- | :--- | :--- |
+| **1. `Tool_Trust_Score_Table`** | **Dynamic Tool Selection** | **🟣 RSI Plane** (`log-analyzer-rs`, `curiosity-engine-rs`) | **🟡 Control Plane** (`tools-service-rs`, `executor-rs`) |
+| **Value Add:** This table would store metrics (e.g., failure rate, latency, compliance score, cost) for every tool or extension managed by `agent-registry-rs`. The Control Plane can then choose the *most reliable* tool, not just the first one found. |
+| **2. `Real_Time_Resource_Status_Table`** | **Dynamic Load Balancing** | **🟣 RSI Plane** (`real-time-metrics-rs`) | **🟡 Control Plane** (`orchestrator-service-rs`, `scheduler-rs`) |
+| **Value Add:** Stores the current load, latency, and available capacity for every service (e.g., LLM Service, Memory Plane). The Orchestrator can use this to dynamically route tasks, reschedule work, or trigger autoscaling (referencing `04-autoscaling.yml`). |
+| **3. `Model_Version_Deployment_Table`** | **AI Model Lifecycle** | **🟣 RSI Plane** (`reflection-service-rs`, `self-improve-rs`) | **🟡 Control Plane** (`llm-service-rs`, `safety-service-rs`) |
+| **Value Add:** Manages which LLM or policy model version is "Active," "Staging," or "Retired." The Reflection Service updates this table after a successful self-improvement cycle, and the LLM Service immediately switches to the new model without a restart (Blue/Green Deployment). |
+| **4. `Global_Runtime_Policy_Table`** | **Instant Policy Updates** | **🔵 Gateway** (`auth-service-rs`) or an Admin Tool | **🔵 Gateway** (`auth-service-rs`), **🟡 Control Plane** (`safety-service-rs`) |
+| **Value Add:** Stores the security and operational policies (e.g., maximum user token lifespan, rate limit thresholds, prohibited keywords for the Safety Service). Updates can be pushed instantly, bypassing the need for a service redeployment. |
+
+---
+
+### Revised Deployment Diagram
+
+To reflect the full, hardened architecture including the proposed additions, here is the updated deployment unit diagram:
+
+
+
+
+---
+
+
 This is an excellent question that gets to the heart of robust AGI architecture. The primary distinction between a **Core Module** and an **Extension Module** lies in its criticality, latency requirements, and system-wide necessity.
 
 Based on your existing architecture and the nature of the suggested modules, all five should be implemented as **Core Modules** and integrated into your existing four deployment planes.
