@@ -1,9 +1,3 @@
-This is the most crucial step for monetization. By synthesizing the complex architecture into a clear **Project Manifest** and tying its unique capabilities to high-value use cases, you create a compelling narrative for investors and enterprise clients.
-
-The **PHOENIX ORCH AGI Core Template** is not just an agent; it's a secured, orchestrated platform ready for enterprise deployment.
-
------
-
 ## 📄 Project Manifest: PHOENIX ORCH Universal AGI Core Template
 
 ### 1\. 🎯 Executive Summary
@@ -62,4 +56,89 @@ The primary monetization model should shift from simple **seat-based pricing** t
 
 The monetization strategy should adopt the "Orchestration Economy Model" (recurring monthly optimization fees) to leverage the continuous value stream provided by the **Telemetrist** and **Config Update** modules.
 
-You can learn more about how AI orchestration can be applied to streamline complex workflows and generate revenue in this video about [integrating AI in business processes](https://www.google.com/search?q=https://www.youtube.com/watch%3Fv%3DkYJ7qUeT8eI).
+---
+
+
+This is a comprehensive and necessary documentation step. By creating a high-level color-coded diagram and detailed module descriptions, you formalize the final architecture of the **Universal AGI Core Template**.
+
+Since the information provided is the complete architectural map, I will synthesize it into a structured, descriptive document and conceptual flow that serves as the final specification before the monolithic merge.
+
+---
+
+## 🎨 Universal AGI Core Template: High-Level Color-Coded Architecture
+
+This architecture uses five main color categories to group related services, reflecting the decoupling and specialization strategy. 
+
+| Color | Component Category | Core Function / Goal |
+| :--- | :--- | :--- |
+| **Phoenix Blue** | **Cognitive Core (The Brain)** | Handles reasoning, planning, action routing, and self-correction. The primary intelligence loop. |
+| **Phoenix Gold** | **Action & Interface** | Manages external communication (API), executes fundamental actions (Code/Web), and serves as the primary entry point. |
+| **Crimson Red** | **Memory & Identity (The Soul)** | Provides long-term knowledge, ethical constraints, safety, and session context storage. |
+| **Emerald Green** | **Resilience & Learning (The Loop)** | Ensures system stability, logs all events, handles failures gracefully, and provides the foundation for Federated Learning updates. |
+| **Charcoal Gray** | **Infrastructure & Security** | Provides essential back-end support (secrets, auth, execution environment, and vector DB). |
+
+---
+
+## 🛠️ Module Detail and Flow Description
+
+### 1. 🟦 Cognitive Core (The Brain)
+
+This group is responsible for interpreting the user's intent and generating a multi-step plan for action.
+
+| Module | Port | Description |
+| :--- | :--- | :--- |
+| **Orchestrator Service** | **50051** | **Core Service.** The central nervous system. Receives requests from the **API Gateway**, generates the `PlanAndExecute` sequence (using the **LLM Service**), manages state, and routes tasks to the **Data Router**. Also contains the logic for **Graceful Failure** response generation. |
+| **LLM Service** | 50053 | **Core Service.** The external interface to the Large Language Model. Used by the **Orchestrator** for planning, reasoning, code generation, and final answer synthesis. |
+| **Reflection Service** | 50065 | **Phase 5.** Analyzes the **Execution Plan** output by the **Orchestrator** (via the **Scheduler**) and the outcome from the **Log Analyzer** to identify errors or suboptimal steps, feeding improvements back into the **Mind KB**. |
+| **Scheduler Service** | 50066 | **Phase 5.** Manages and schedules the sequential steps within an **Orchestrator's** plan, handles concurrency, and ensures order of execution. |
+
+### 2. 🟨 Action & Interface
+
+These services are the system's eyes, ears, and hands—managing external access and the tools it can use.
+
+| Module | Port | Description |
+| :--- | :--- | :--- |
+| **API Gateway** | **8282** | **Gateway.** The secured external entry point. Handles **Authentication** (via **Auth Service**), rate limiting, and mapping the external HTTP JSON requests to the internal gRPC calls (e.g., routing `POST /execute` to **Orchestrator**). |
+| **Tools Service** | 50054 | **Core Service.** Provides general-purpose, non-domain-specific actions like **Web Search** and **Code Execution** (`execute_python`). Called by the **Data Router** on behalf of the **Orchestrator**. |
+| **Data Router Service** | **50052** | **Core Service.** The centralized, resilient routing layer. Receives requests from the **Orchestrator** and reliably forwards them to the correct internal service (e.g., **LLM**, **Tools**, or a **Knowledge Base**). |
+| **Frontend** | 3000 | **Web App.** The user interface that handles secure communication with the **API Gateway (8282)**. Currently the test harness for validating **Memory Persistence**. |
+
+### 3. 🟥 Memory & Identity
+
+The collective knowledge base, identity constraints, and continuous session context for the AGI.
+
+| Module | Port | Description |
+| :--- | :--- | :--- |
+| **Context Manager Service** | 50064 | **Phase 5.** The primary context aggregator. Manages session state, retrieves short-term memory from **Persistence KB**, and enriches the **Orchestrator's** request with relevant long-term context from **Mind/Soul/Heart KBs**. |
+| **Persistence KB** | **50071** | **RSI Component.** **Short-term memory and session state.** Stores session variables, recent chat history, and contextual entities associated with a `session_id`. |
+| **Mind KB** | 50057 | **Knowledge Base.** Stores objective, factual, and learned domain knowledge. |
+| **Soul KB** | 50061 | **Knowledge Base.** Stores immutable ethical constraints, core identity, and safety rules (the AGI's personality and values). |
+| **Heart KB** | 50059 | **Knowledge Base.** Stores relationship states, emotional context, and user sentiment. |
+| **Social KB** | 50060 | **Knowledge Base.** Stores externally gathered social data, interaction patterns, and persona history. |
+| **Body KB** | 50058 | **Knowledge Base.** Stores real-time, self-generated internal state data, performance metrics, and energy/resource allocation status. |
+| **Sensor Service** | N/A | **Client-only.** Collects local client data (e.g., resource usage, operational status) and sends it to the **Body KB**. |
+
+### 4. 🟩 Resilience & Learning
+
+These new modules ensure the system's long-term stability, security, and growth via federated learning.
+
+| Module | Port | Description |
+| :--- | :--- | :--- |
+| **Log Analyzer Service** | 50075 | **RSI Component.** Processes logs and trace data from the **Orchestrator** and **Logging Service** to detect anomalies, track **CRITICAL\_FAILURE** events, and provide analysis for the **Reflection Service**. |
+| **Telemetrist Service** | (New) | **RSI Component.** **(Implemented as a library)** Collects **Execution Traces** and **Conversation Logs** from the client machine, implements **PII Redaction/Tokenization**, and securely streams batched data to the cloud ingestion endpoint for **Federated Learning**. |
+| **Config Update Service** | (New) | **RSI Component.** **(Implemented as a library)** Checks for and securely downloads signed updates for **LoRA/Adapter Models** and the central **`phoenix.toml`** configuration file, ensuring the AGI can be updated without a full binary replacement. |
+| **Curiosity Engine** | 50076 | **RSI Component.** Generates novel, low-risk test questions to explore knowledge boundaries and improve **Mind KB** accuracy. |
+
+### 5. ⬛ Infrastructure & Security
+
+Essential non-cognitve services required for foundational operation.
+
+| Module | Port | Description |
+| :--- | :--- | :--- |
+| **Safety Service** | 50055 | **Core Service.** The final safety check performed by the **Orchestrator** on generated plans and responses before execution or delivery. |
+| **Auth Service** | 50090 | **Security.** Manages user sessions, JWT generation, and token validation for the **API Gateway**. |
+| **Secrets Service** | 50080 | **Security.** Securely retrieves API keys, database credentials, and cryptographic keys (like the public key for **Config Update Service** signature verification). |
+| **Executor Service** | 50062 | **Phase 4.** The environment responsible for executing compiled code (e.g., Python scripts generated by the **Tools Service**). |
+| **Logging Service** | 50056 | **Core Service.** Centralized persistence point for all system logs (errors, warnings, debug traces). |
+| **Qdrant** | 6333 | **Vector DB (HTTP).** The primary database for storing vector embeddings used by all Knowledge Bases. |
+| **Redis** | 6379 | **Cache.** The high-speed cache used for frequently accessed data and transient context (e.g., by the **Context Manager**). |
