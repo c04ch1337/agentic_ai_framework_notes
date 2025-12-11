@@ -142,3 +142,11 @@ Essential non-cognitve services required for foundational operation.
 | **Logging Service** | 50056 | **Core Service.** Centralized persistence point for all system logs (errors, warnings, debug traces). |
 | **Qdrant** | 6333 | **Vector DB (HTTP).** The primary database for storing vector embeddings used by all Knowledge Bases. |
 | **Redis** | 6379 | **Cache.** The high-speed cache used for frequently accessed data and transient context (e.g., by the **Context Manager**). |
+
+
+---
+
+Module,Status,Port/Protocol,Rationale
+persistence-kb-rs,Requires Port,50071 (gRPC),"This is a Knowledge Base (KB). Like all other KBs (Mind, Soul, etc.), it must expose a gRPC interface for the Context Manager to query and write short-term memory data."
+curiosity-engine-rs,Requires Port,50076 (gRPC),"This is a RSI Component that runs a continuous, scheduled background process to generate novel queries. It needs to expose a gRPC endpoint for the Scheduler or Reflection Service to manage and monitor its loop."
+log-analyzer-rs,Requires Port,50075 (gRPC),This component processes structured log streams from the Logging Service (50056). It must expose a gRPC endpoint for the Reflection Service to query for CRITICAL_FAILURE events.
